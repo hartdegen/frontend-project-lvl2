@@ -1,5 +1,18 @@
-import sum from '../src';
+import fs from 'fs';
+import gendiff from '../src';
 
-test('1 + 2 should return 3', () => {
-  expect(sum(1, 2)).toBe(3);
+const before = JSON.parse(fs.readFileSync(`${__dirname}/fixtures/before.json`));
+const after = JSON.parse(fs.readFileSync(`${__dirname}/fixtures/after.json`));
+
+const answer = `{
+    host: hexlet.io
+  + timeout: 20
+  - timeout: 50
+  - proxy: 123.234.53.22
+  - follow: false
+  + verbose: true
+}`;
+
+test('check json diff', () => {
+  expect(gendiff(before, after)).toBe(answer);
 });
