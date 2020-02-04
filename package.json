@@ -1,47 +1,22 @@
 {
-  "name": "frontend-project-lvl2",
+  "name": "project2",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
-  "main": "",
+  "main": "src/index.js",
   "bin": {
-    "gendiff": "dist/bin/gendiff.js"
+    "gendiff": "src/bin/gendiff.js"
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
-    "test": "jest",
-    "babel-node": "babel-node",
-    "build": "NODE_ENV=production babel src --out-dir dist --source-maps inline",
-    "prepublishOnly": "npm run build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hartdegen/frontend-project-lvl2.git"
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/hartdegen/frontend-project-lvl2/issues"
-  },
-  "homepage": "https://github.com/hartdegen/frontend-project-lvl2#readme",
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.8.4",
-    "@babel/node": "^7.8.4",
-    "@babel/preset-env": "^7.8.4",
-    "babel-eslint": "^10.0.3",
-    "babel-jest": "^25.1.0",
+    "commander": "^4.1.1",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-babel": "^5.3.0",
-    "eslint-plugin-import": "^2.20.0",
-    "eslint-plugin-jest": "^23.6.0",
-    "jest": "^25.1.0",
-    "jest-cli": "^25.1.0"
-  },
-  "dependencies": {
-    "commander": "^4.1.0",
-    "js-yaml": "^3.13.1"
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "^23.6.0"
   }
 }

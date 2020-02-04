@@ -1,7 +1,7 @@
 // trying to write diff function
 export default (before, after) => {
-  const b = before;
-  const a = after;
+  const b = JSON.parse(before);
+  const a = JSON.parse(after);
   const array = Object.entries({ ...b, ...a });
 
   const reduced = array.reduce((acc, value) => {

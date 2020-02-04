@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 import program from 'commander';
 import fs from 'fs';
-import diff from '..';
+// eslint-disable-next-line import/extensions
+import diff from '../index.js';
+
 
 program
   .description('Compares two configuration files and shows a difference.')

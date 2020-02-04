@@ -1,9 +1,8 @@
 install:
 	npm install
 start:
-	npx babel-node src/index.js
+	npx node src/bin/gendiff.js
 build:
-	rm -rf dist
 	npm run build
 publish:
 	npm publish --dry-run
