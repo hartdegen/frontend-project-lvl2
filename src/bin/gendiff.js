@@ -2,7 +2,6 @@
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import program from 'commander';
-import fs from 'fs';
 // eslint-disable-next-line import/extensions
 import diff from '../index.js';
 
@@ -13,9 +12,7 @@ program
   .version('0.0.1')
   .arguments('<firstConfig> <secondConfig>')
   .action((firstConfig, secondConfig) => {
-    const before = fs.readFileSync(`${firstConfig}`);
-    const after = fs.readFileSync(`${secondConfig}`);
-    console.log(diff(before, after));
+    console.log(diff(firstConfig, secondConfig));
   });
 
 program.parse(process.argv);

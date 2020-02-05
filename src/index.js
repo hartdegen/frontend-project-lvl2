@@ -1,7 +1,14 @@
 // trying to write diff function
+import path from 'path';
+import parser from './parsers.js';
+
+
 export default (before, after) => {
-  const b = JSON.parse(before);
-  const a = JSON.parse(after);
+  const extName = path.extname(`${before}`);
+  console.log(path.extname(`${before}`));
+
+  const b = parser(extName, before);
+  const a = parser(extName, after);
   const array = Object.entries({ ...b, ...a });
 
   const reduced = array.reduce((acc, value) => {
