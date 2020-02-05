@@ -5,7 +5,6 @@ import parser from './parsers.js';
 
 export default (before, after) => {
   const extName = path.extname(`${before}`);
-  console.log(path.extname(`${before}`));
 
   const b = parser(extName, before);
   const a = parser(extName, after);
