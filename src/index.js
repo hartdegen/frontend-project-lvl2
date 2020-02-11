@@ -1,46 +1,34 @@
-/* eslint-disable no-trailing-spaces */
-/* eslint-disable no-empty */
-// trying to write diff function
 import path from 'path';
+// eslint-disable-next-line import/extensions
 import parser from './parsers.js';
 
 const extensionOfFile = (pathToFile) => path.extname(`${pathToFile}`);
 
-const parserFunc = (before, after) => {
-  const extName = extensionOfFile(before);
-  const b = parser(extName, before);
-  const a = parser(extName, after);
-  // eslint-disable-next-line no-use-before-define
-  return `{${render(diff(b, a))}\n}`;
-};
-
 const render = (obj, count = 0, space = '   ') => {
   const array = Object.entries(obj);
-  return array.reduce((acc, val) => {
-    if (typeof val[1] !== 'object') return `${acc}\n ${space.repeat(count)}${val[0]}: ${val[1]}`;
-    if (typeof val[1] === 'object' && count === 0) return `${acc}\n  ${val[0]}: {${render(val[1], count + 1)}\n${space} }`;
-    if (typeof val[1] === 'object') return `${acc}\n${space} ${val[0]}: {${render(val[1], count + 1)}\n${space.repeat(2)}}`;
+  return array.reduce((acc, value) => {
+    const [key, val] = value;
+    return (typeof val !== 'object') ? `${acc}\n${space.repeat(count)}${key}: ${val}` : `${acc}\n${space.repeat(count)}${key}: {${render(val, count + 1)}\n${space} ${space.repeat(count)}}`;
   }, '');
 };
 
-const diff = (b = {}, a = {}) => {
-  const sliced = { ...b, ...a };
-  const array = Object.entries(sliced);
-  console.log('ARRAY', array);
+const keysOf = (obj) => Object.keys(obj);
+const valueOf = (obj) => (typeof obj !== 'object' ? obj : Object.entries(obj).reduce((someAcc, val) => ({ ...someAcc, [`  ${val[0]}`]: `${val[1]}` }), {}));
+const diff = (b, a) => {
+  const array = Object.entries({ ...b, ...a });
 
-  const reduced = array.reduce((acc, value) => {
-    if (typeof value === 'string') return value;
+  return array.reduce((acc, value) => {
     const [key] = value;
-    
-    if (b[key] === a[key]) return { ...acc, [`  ${key}`]: a[key] };
+    if (b[key] === a[key]) return { ...acc, [`  ${key}`]: valueOf(a[key]) };
     if (typeof b[key] === 'object' && typeof a[key] === 'object') return { ...acc, [`  ${key}`]: diff(b[key], a[key]) };
-    if (Object.keys(b).includes(key) && !Object.keys(a).includes(key)) return { ...acc, [`- ${key}`]: b[key] };
-    if (!Object.keys(b).includes(key) && Object.keys(a).includes(key)) return { ...acc, [`+ ${key}`]: a[key] };
-    if (Object.keys(b).includes(key) && Object.keys(a).includes(key) && typeof b[key] !== 'object') return { ...acc, [`- ${key}`]: b[key], [`+ ${key}`]: a[key] };
-    if (Object.keys(b).includes(key) && Object.keys(a).includes(key) && typeof a[key] !== 'object') return { ...acc, [`- ${key}`]: b[key], [`+ ${key}`]: a[key] };
-    return { ...acc };
+    if (keysOf(b).includes(key) && keysOf(a).includes(key)) return { ...acc, [`- ${key}`]: valueOf(b[key]), [`+ ${key}`]: valueOf(a[key]) };
+    return (!keysOf(b).includes(key)) ? { ...acc, [`+ ${key}`]: valueOf(a[key]) } : { ...acc, [`- ${key}`]: valueOf(b[key]) };
   }, {});
-  return reduced;
 };
 
-export default parserFunc;
+export default (before, after) => {
+  const extName = extensionOfFile(before);
+  const b = parser(extName, before);
+  const a = parser(extName, after);
+  return `{\n${render(diff(b, a))}\n}`;
+};
