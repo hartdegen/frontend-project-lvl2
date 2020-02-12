@@ -12,7 +12,7 @@ program
   .version('0.0.1')
   .arguments('<firstConfig> <secondConfig>')
   .action((firstConfig, secondConfig) => {
-    console.log(diff(firstConfig, secondConfig));
+    console.log(diff(firstConfig, secondConfig, program.format));
   });
 
 program.parse(process.argv);
