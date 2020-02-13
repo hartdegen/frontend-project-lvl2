@@ -33,5 +33,5 @@ export default (before, after, format = '') => {
   const a = parser(extName, after);
   if (format === 'plain') return formatter(b, a);
   if (format === 'json') return JSON.stringify(b, a);
-  return `{\n${render(diff(b, a))}\n}`;
+  return `{${render(diff(b, a))}\n}`;
 };

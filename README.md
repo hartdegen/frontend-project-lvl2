@@ -8,4 +8,4 @@ How to install and launch :
 --------------------------
 "gendiff"
 
-[![asciicast](https://asciinema.org/a/tguDkWdXIA6fd9m7fEzreafBS.svg)](https://asciinema.org/a/tguDkWdXIA6fd9m7fEzreafBS)
+[![asciicast](https://asciinema.org/a/tguDkWdXIA6fd9m7fEzreafBS.svg)](https://asciinema.org/a/r5irSgJt7GpeeSnA9LCbxn8hw)
