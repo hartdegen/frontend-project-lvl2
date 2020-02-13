@@ -1,8 +1,6 @@
 import path from 'path';
-// eslint-disable-next-line import/extensions
-import parser from './parsers.js';
-// eslint-disable-next-line import/extensions
-import formatter from './formatters/index.js';
+import parser from './parsers';
+import formatter from './formatters/formatter';
 
 const extensionOfFile = (pathToFile) => path.extname(`${pathToFile}`);
 
