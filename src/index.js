@@ -31,5 +31,7 @@ export default (before, after, format = '') => {
   const extName = extensionOfFile(before);
   const b = parser(extName, before);
   const a = parser(extName, after);
-  return format === 'plain' ? formatter(b, a) : `{\n${render(diff(b, a))}\n}`;
+  if (format === 'plain') return formatter(b, a);
+  if (format === 'json') return JSON.stringify(b, a);
+  return `{\n${render(diff(b, a))}\n}`;
 };
