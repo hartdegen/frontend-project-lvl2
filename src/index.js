@@ -15,7 +15,7 @@ const render = (obj, count = 0, space = '  ') => Object.entries(obj).reduce((acc
 const keysOf = (obj) => Object.keys(obj);
 const valueOf = (obj) => (typeof obj !== 'object' ? obj
   : Object.entries(obj).reduce((someAcc, val) => ({ ...someAcc, [`  ${val[0]}`]: `${val[1]}` }), {}));
-export const diff = (b, a) => {
+const diff = (b, a) => {
   const array = Object.entries({ ...b, ...a });
 
   return array.reduce((acc, value) => {

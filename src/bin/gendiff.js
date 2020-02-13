@@ -1,10 +1,8 @@
 #!/usr/bin/env node
-
-// eslint-disable-next-line import/no-extraneous-dependencies
 import program from 'commander';
 // eslint-disable-next-line import/extensions
 import diff from '../index.js';
-
+// стандартный путь '..' не работает, только полное указание пути
 
 program
   .description('Compares two configuration files and shows a difference.')

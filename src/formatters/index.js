@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 const keysOf = (obj) => Object.keys(obj);
 const valueOf = (obj) => (typeof obj !== 'object' ? obj : '[complex value]');
 const func = (b, a, name = '', keyName = '') => {
