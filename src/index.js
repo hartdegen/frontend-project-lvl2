@@ -7,7 +7,7 @@ const getFileExtension = (pathToFile) => path.extname(`${pathToFile}`);
 const startRendering = (obj, depthСount = 0, space = '  ') => Object.entries(obj).reduce((acc, value) => {
   const [key, val] = value;
   return typeof val !== 'object' ? `${acc}\n${space.repeat(depthСount)}${key}: ${val}`
-    : `${acc}\n${space.repeat(depthСount)}${key}: {${startRendering(val, depthСount + 1)}\n${space}${space.repeat(count)}}`;
+    : `${acc}\n${space.repeat(depthСount)}${key}: {${startRendering(val, depthСount + 1)}\n${space}${space.repeat(depthСount)}}`;
 }, '');
 
 const keysOf = (obj) => Object.keys(obj);
