@@ -6,6 +6,22 @@
 
 Setup :
 --------------------------
+[![asciicast](https://asciinema.org/a/h4PINkeUu17PoSNMzjl1NuQ2a.svg)](https://asciinema.org/a/h4PINkeUu17PoSNMzjl1NuQ2a)
 
 How to launch :
 --------------------------
+gendiff with .json file
+
+[![asciicast](https://asciinema.org/a/Y23OTdjO4QmBHutxKymeZFv3z.svg)](https://asciinema.org/a/Y23OTdjO4QmBHutxKymeZFv3z)
+
+gendiff with .yaml file
+
+[![asciicast](https://asciinema.org/a/HXatAGKRtr0hN2pDXvx5gdswv.svg)](https://asciinema.org/a/HXatAGKRtr0hN2pDXvx5gdswv)
+
+gendiff with plain mode (.ini file example)
+
+[![asciicast](https://asciinema.org/a/QFq9Qsb83sgRfGvcgJ7EDxBgZ.svg)](https://asciinema.org/a/QFq9Qsb83sgRfGvcgJ7EDxBgZ)
+
+changing file format to .json
+
+[![asciicast](https://asciinema.org/a/aEnqfSmgqtPbxyi2lXdsRdFZj.svg)](https://asciinema.org/a/aEnqfSmgqtPbxyi2lXdsRdFZj)
