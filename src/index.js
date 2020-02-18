@@ -6,11 +6,12 @@ const getFileExtension = (pathToFile) => path.extname(`${pathToFile}`);
 const keysOf = (obj) => Object.keys(obj);
 // b is "before"
 // a is "after"
-const diff = (b, a = {}) => {
-  const mergedConfigs = Object.entries({ ...b, ...a });
+const diff = (b = {}, a = {}) => {
+  const mergedConfigsArr = Object.entries({ ...b, ...a });
 
-  return mergedConfigs.reduce((acc, value) => {
+  return mergedConfigsArr.reduce((acc, value) => {
     const [key] = value;
+
     if (b[key] === a[key]) {
       return [...acc, ['unchanged', key, a[key]]];
     }
@@ -26,25 +27,26 @@ const diff = (b, a = {}) => {
 };
 
 const getRenderResult = (arr, depthСount = 0, space = '    ') => arr.reduce((acc, value) => {
-  const [status, key, val, nextVal] = value;
-  const getValue = (item) => (toString.call(item) !== '[object Object]' ? item
+  const [status, key, val, possiblyChangedVal] = value;
+
+  const checkAndGetRequiredVal = (item) => (toString.call(item) !== '[object Object]' ? item
     : `{${getRenderResult(diff(item, item), depthСount + 1)}\n    ${space.repeat(depthСount)}}`);
 
   switch (status) {
     case 'added':
-      return `${acc}\n${space.repeat(depthСount)}  + ${key}: ${getValue(val)}`;
+      return `${acc}\n${space.repeat(depthСount)}  + ${key}: ${checkAndGetRequiredVal(val)}`;
 
     case 'deleted':
-      return `${acc}\n${space.repeat(depthСount)}  - ${key}: ${getValue(val)}`;
+      return `${acc}\n${space.repeat(depthСount)}  - ${key}: ${checkAndGetRequiredVal(val)}`;
 
     case 'unchanged':
-      return `${acc}\n${space.repeat(depthСount)}    ${key}: ${getValue(val)}`;
+      return `${acc}\n${space.repeat(depthСount)}    ${key}: ${checkAndGetRequiredVal(val)}`;
 
     case 'changed':
-      return `${acc}\n${space.repeat(depthСount)}  - ${key}: ${getValue(val)}\n${space.repeat(depthСount)}  + ${key}: ${getValue(nextVal)}`;
+      return `${acc}\n${space.repeat(depthСount)}  - ${key}: ${checkAndGetRequiredVal(val)}\n${space.repeat(depthСount)}  + ${key}: ${checkAndGetRequiredVal(possiblyChangedVal)}`;
 
     default:
-      return `${acc}\n${space.repeat(depthСount)}    ${key}: {${getRenderResult(getValue(val), depthСount + 1)}\n    ${space.repeat(depthСount)}}`;
+      return `${acc}\n${space.repeat(depthСount)}    ${key}: {${getRenderResult(checkAndGetRequiredVal(val), depthСount + 1)}\n    ${space.repeat(depthСount)}}`;
   }
 }, '');
 

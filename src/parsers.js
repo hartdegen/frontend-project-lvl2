@@ -7,8 +7,14 @@ import path from 'path';
 export default (extName, somePath) => {
   const fullPath = path.resolve(process.cwd(), somePath);
   const data = fs.readFileSync(fullPath).toString();
+  switch (extName) {
+    case '.yaml':
+      return yaml.safeLoad(data);
 
-  if (extName === '.yaml') return yaml.safeLoad(data);
-  if (extName === '.ini') return ini.parse(data);
-  return JSON.parse(data);
+    case '.ini':
+      return ini.parse(data);
+
+    default:
+      return JSON.parse(data);
+  }
 };
