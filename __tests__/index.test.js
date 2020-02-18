@@ -7,7 +7,7 @@ let resultTextFormat; let resultPlainFormat; let exampleJson;
 
 beforeEach(() => {
   resultTextFormat = fs.readFileSync(pathTo('resultTextFormat'), 'utf-8');
-  resultPlainFormat = fs.readFileSync(pathTo('resultPlainYamlFormat'), 'utf-8');
+  resultPlainFormat = fs.readFileSync(pathTo('resultPlainFormat'), 'utf-8');
   exampleJson = fs.readFileSync(pathTo('example.json'), 'utf-8');
 });
 
