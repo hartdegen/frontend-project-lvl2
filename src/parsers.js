@@ -4,9 +4,9 @@ import ini from 'ini';
 import process from 'process';
 import path from 'path';
 
-export default (extName, somePath) => {
-  const fullPath = path.resolve(process.cwd(), somePath);
-  const data = fs.readFileSync(fullPath).toString();
+export default (extName, pathToConfig) => {
+  const absolutePath = path.resolve(process.cwd(), pathToConfig);
+  const data = fs.readFileSync(absolutePath).toString();
   switch (extName) {
     case '.yaml':
       return yaml.safeLoad(data);

@@ -26,27 +26,29 @@ const diff = (b = {}, a = {}) => {
   }, []);
 };
 
-const getRenderResult = (arr, depthСount = 0, space = '    ') => arr.reduce((acc, value) => {
-  const [status, key, val, possiblyChangedVal] = value;
+const getVal = (item, count, mark, recursionFunc) => (toString.call(item) !== '[object Object]' ? item
+  : `{${recursionFunc(diff(item, item), count + 1)}\n    ${mark.repeat(count)}}`);
 
-  const checkAndGetRequiredVal = (item) => (toString.call(item) !== '[object Object]' ? item
-    : `{${getRenderResult(diff(item, item), depthСount + 1)}\n    ${space.repeat(depthСount)}}`);
+const getRender = (arr, depthСount = 0) => arr.reduce((acc, value) => {
+  const [status, key, val, possiblyChangedVal] = value;
+  const space = '    ';
+
 
   switch (status) {
     case 'added':
-      return `${acc}\n${space.repeat(depthСount)}  + ${key}: ${checkAndGetRequiredVal(val)}`;
+      return `${acc}\n${space.repeat(depthСount)}  + ${key}: ${getVal(val, depthСount, space, getRender)}`;
 
     case 'deleted':
-      return `${acc}\n${space.repeat(depthСount)}  - ${key}: ${checkAndGetRequiredVal(val)}`;
+      return `${acc}\n${space.repeat(depthСount)}  - ${key}: ${getVal(val, depthСount, space, getRender)}`;
 
     case 'unchanged':
-      return `${acc}\n${space.repeat(depthСount)}    ${key}: ${checkAndGetRequiredVal(val)}`;
+      return `${acc}\n${space.repeat(depthСount)}    ${key}: ${getVal(val, depthСount, space, getRender)}`;
 
     case 'changed':
-      return `${acc}\n${space.repeat(depthСount)}  - ${key}: ${checkAndGetRequiredVal(val)}\n${space.repeat(depthСount)}  + ${key}: ${checkAndGetRequiredVal(possiblyChangedVal)}`;
+      return `${acc}\n${space.repeat(depthСount)}  - ${key}: ${getVal(val, depthСount, space, getRender)}\n${space.repeat(depthСount)}  + ${key}: ${getVal(possiblyChangedVal, depthСount, space, getRender)}`;
 
     default:
-      return `${acc}\n${space.repeat(depthСount)}    ${key}: {${getRenderResult(checkAndGetRequiredVal(val), depthСount + 1)}\n    ${space.repeat(depthСount)}}`;
+      return `${acc}\n${space.repeat(depthСount)}    ${key}: {${getRender(getVal(val, depthСount, space, getRender), depthСount + 1)}\n    ${space.repeat(depthСount)}}`;
   }
 }, '');
 
@@ -62,6 +64,6 @@ export default (before, after, format = '') => {
       return JSON.stringify(bConfig, aConfig);
 
     default:
-      return `{${getRenderResult(diff(bConfig, aConfig))}\n}`;
+      return `{${getRender(diff(bConfig, aConfig))}\n}`;
   }
 };
