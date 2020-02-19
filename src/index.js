@@ -26,31 +26,30 @@ const diff = (b = {}, a = {}) => {
   }, []);
 };
 
-const getVal = (item, count, mark, recursionFunc) => (toString.call(item) !== '[object Object]' ? item
-  : `{${recursionFunc(diff(item, item), count + 1)}\n    ${mark.repeat(count)}}`);
+const getVal = (item, count, mark, recursionFunc) => (toString.call(item) !== '[object Object]' ? `${item}`
+  : `{${recursionFunc(diff(item, item), count + 1).flat(Infinity)}\n    ${mark.repeat(count)}}`);
 
 const getRender = (arr, depthСount = 0) => arr.reduce((acc, value) => {
   const [status, key, val, possiblyChangedVal] = value;
   const space = '    ';
 
-
   switch (status) {
     case 'added':
-      return `${acc}\n${space.repeat(depthСount)}  + ${key}: ${getVal(val, depthСount, space, getRender)}`;
+      return [...acc, `\n${space.repeat(depthСount)}  + ${key}: ${getVal(val, depthСount, space, getRender)}`];
 
     case 'deleted':
-      return `${acc}\n${space.repeat(depthСount)}  - ${key}: ${getVal(val, depthСount, space, getRender)}`;
+      return [...acc, `\n${space.repeat(depthСount)}  - ${key}: ${getVal(val, depthСount, space, getRender)}`];
 
     case 'unchanged':
-      return `${acc}\n${space.repeat(depthСount)}    ${key}: ${getVal(val, depthСount, space, getRender)}`;
+      return [...acc, `\n${space.repeat(depthСount)}    ${key}: ${getVal(val, depthСount, space, getRender)}`];
 
     case 'changed':
-      return `${acc}\n${space.repeat(depthСount)}  - ${key}: ${getVal(val, depthСount, space, getRender)}\n${space.repeat(depthСount)}  + ${key}: ${getVal(possiblyChangedVal, depthСount, space, getRender)}`;
+      return [...acc, `\n${space.repeat(depthСount)}  - ${key}: ${getVal(val, depthСount, space, getRender)}\n${space.repeat(depthСount)}  + ${key}: ${getVal(possiblyChangedVal, depthСount, space, getRender)}`];
 
     default:
-      return `${acc}\n${space.repeat(depthСount)}    ${key}: {${getRender(getVal(val, depthСount, space, getRender), depthСount + 1)}\n    ${space.repeat(depthСount)}}`;
+      return [...acc, `\n${space.repeat(depthСount)}    ${key}: {`, ...getRender(val, depthСount + 1), `\n    ${space.repeat(depthСount)}}`];
   }
-}, '');
+}, []);
 
 export default (before, after, format = '') => {
   const extName = (obj) => getFileExtension(obj);
@@ -64,6 +63,6 @@ export default (before, after, format = '') => {
       return JSON.stringify(bConfig, aConfig);
 
     default:
-      return `{${getRender(diff(bConfig, aConfig))}\n}`;
+      return `{${getRender(diff(bConfig, aConfig)).join('')}\n}`;
   }
 };
