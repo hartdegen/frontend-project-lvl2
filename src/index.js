@@ -6,7 +6,7 @@ const getFileExtension = (pathToFile) => path.extname(`${pathToFile}`);
 const keysOf = (obj) => Object.keys(obj);
 // b is "before"
 // a is "after"
-const diff = (b = {}, a = {}) => {
+const genDiff = (b = {}, a = {}) => {
   const mergedConfigsArr = Object.entries({ ...b, ...a });
 
   return mergedConfigsArr.reduce((acc, value) => {
@@ -16,7 +16,7 @@ const diff = (b = {}, a = {}) => {
       return [...acc, ['unchanged', key, a[key]]];
     }
     if (typeof b[key] === 'object' && typeof a[key] === 'object') {
-      return [...acc, ['gottaCheckDeeper', key, diff(b[key], a[key])]];
+      return [...acc, ['gottaCheckDeeper', key, genDiff(b[key], a[key])]];
     }
     if (keysOf(b).includes(key) && keysOf(a).includes(key)) {
       return [...acc, ['changed', key, b[key], a[key]]];
@@ -27,7 +27,7 @@ const diff = (b = {}, a = {}) => {
 };
 
 const getVal = (item, count, mark, recursionFunc) => (toString.call(item) !== '[object Object]' ? `${item}`
-  : `{${recursionFunc(diff(item, item), count + 1).flat(Infinity)}\n    ${mark.repeat(count)}}`);
+  : `{${recursionFunc(genDiff(item, item), count + 1).flat(Infinity)}\n    ${mark.repeat(count)}}`);
 
 const getRender = (arr, depthСount = 0) => arr.reduce((acc, value) => {
   const [status, key, val, possiblyChangedVal] = value;
@@ -51,18 +51,22 @@ const getRender = (arr, depthСount = 0) => arr.reduce((acc, value) => {
   }
 }, []);
 
+const makeFormatting = (before, after, format) => {
+  switch (format) {
+    case 'plain':
+      return formatter(before, after);
+
+    case 'json':
+      return JSON.stringify(before, after);
+
+    default:
+      return `{${getRender(genDiff(before, after)).join('')}\n}`;
+  }
+};
+
 export default (before, after, format = '') => {
   const extName = (obj) => getFileExtension(obj);
   const bConfig = parse(extName(before), before);
   const aConfig = parse(extName(after), after);
-  switch (format) {
-    case 'plain':
-      return formatter(bConfig, aConfig);
-
-    case 'json':
-      return JSON.stringify(bConfig, aConfig);
-
-    default:
-      return `{${getRender(diff(bConfig, aConfig)).join('')}\n}`;
-  }
+  return makeFormatting(bConfig, aConfig, format);
 };

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import diff from '../src';
+import genDiff from '../src';
 
 const pathTo = (fileName) => path.resolve(`${__dirname}/fixtures/${fileName}`);
 
@@ -14,5 +14,5 @@ test.each([
   const b = pathTo(before);
   const a = pathTo(after);
   const expected = fs.readFileSync(pathTo(resultFileName), 'utf-8');
-  expect(diff(b, a, format)).toBe(expected);
+  expect(genDiff(b, a, format)).toBe(expected);
 });

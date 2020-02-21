@@ -21,11 +21,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: npm install, build, and test
         run: |
-          npm install
-          npm run build
-          npm test
+          make install
+          make build
+          make test
         env:
           CI: true
       - name: run linter
         run: |
-          npx eslint .
+          make lint
