@@ -13,24 +13,29 @@ const genDiff = (b = {}, a = {}) => {
     const [key] = value;
 
     if (b[key] === a[key]) {
-      return [...acc, ['unchanged', key, a[key]]];
+      return [...acc, { status: 'unchanged', key: `${key}`, value: [a[key]] }];
     }
     if (typeof b[key] === 'object' && typeof a[key] === 'object') {
-      return [...acc, ['gottaCheckDeeper', key, genDiff(b[key], a[key])]];
+      return [...acc, { status: 'gottaCheckDeeper', key: `${key}`, value: genDiff(b[key], a[key]) }];
     }
     if (keysOf(b).includes(key) && keysOf(a).includes(key)) {
-      return [...acc, ['changed', key, b[key], a[key]]];
+      return [...acc,
+        { status: 'changedOld', key: `${key}`, value: [b[key]] },
+        { status: 'changedNew', key: `${key}`, value: [a[key]] }];
     }
-    return !keysOf(b).includes(key) ? [...acc, ['added', key, a[key]]]
-      : [...acc, ['deleted', key, b[key]]];
+    return !keysOf(b).includes(key)
+      ? [...acc, { status: 'added', key: `${key}`, value: [a[key]] }]
+      : [...acc, { status: 'deleted', key: `${key}`, value: [b[key]] }];
   }, []);
 };
 
-const getVal = (item, count, mark, recursionFunc) => (toString.call(item) !== '[object Object]' ? `${item}`
-  : `{${recursionFunc(genDiff(item, item), count + 1).flat(Infinity)}\n    ${mark.repeat(count)}}`);
+const getVal = (item, count, mark, recursionFunc) => {
+  if (typeof item.value[0] !== 'object') return item.value;
+  return `{${recursionFunc(genDiff(item.value[0], item.value[0]), count + 1)}\n    ${mark.repeat(count)}}`;
+};
 
-const getRender = (arr, depthСount = 0) => arr.reduce((acc, value) => {
-  const [status, key, val, possiblyChangedVal] = value;
+const getRender = (arr, depthСount = 0) => arr.reduce((acc, val) => {
+  const { status, key, value } = val;
   const space = '    ';
 
   switch (status) {
@@ -43,11 +48,14 @@ const getRender = (arr, depthСount = 0) => arr.reduce((acc, value) => {
     case 'unchanged':
       return [...acc, `\n${space.repeat(depthСount)}    ${key}: ${getVal(val, depthСount, space, getRender)}`];
 
-    case 'changed':
-      return [...acc, `\n${space.repeat(depthСount)}  - ${key}: ${getVal(val, depthСount, space, getRender)}\n${space.repeat(depthСount)}  + ${key}: ${getVal(possiblyChangedVal, depthСount, space, getRender)}`];
+    case 'changedOld':
+      return [...acc, `\n${space.repeat(depthСount)}  - ${key}: ${getVal(val, depthСount, space, getRender)}`];
+
+    case 'changedNew':
+      return [...acc, `\n${space.repeat(depthСount)}  + ${key}: ${getVal(val, depthСount, space, getRender)}`];
 
     default:
-      return [...acc, `\n${space.repeat(depthСount)}    ${key}: {`, ...getRender(val, depthСount + 1), `\n    ${space.repeat(depthСount)}}`];
+      return [...acc, `\n${space.repeat(depthСount)}    ${key}: {`, ...getRender(value, depthСount + 1), `\n    ${space.repeat(depthСount)}}`];
   }
 }, []);
 
