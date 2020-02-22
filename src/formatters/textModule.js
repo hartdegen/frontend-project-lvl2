@@ -1,5 +1,7 @@
+import _ from 'lodash';
+
 const getVal = (item, count, mark) => {
-  if (typeof item[0] !== 'object') return item;
+  if (!_.isPlainObject(...item)) return item;
 
   return item.reduce((acc, value) => {
     const [key, val] = Object.entries(value)[0];
@@ -19,7 +21,7 @@ const getRender = (arr, depthСount = 0) => arr.reduce((acc, val) => {
       return [...acc, `\n${space.repeat(depthСount)}  - ${key}: ${getVal(value, depthСount, space)}`];
 
     case 'changed':
-      return [...acc, `\n${space.repeat(depthСount)}  - ${key}: ${getVal(value[0], depthСount, space)}`, `\n${space.repeat(depthСount)}  + ${key}: ${getVal(value[1], depthСount, space)}`];
+      return [...acc, `\n${space.repeat(depthСount)}  - ${key}: ${getVal(value[0], depthСount, space)}\n${space.repeat(depthСount)}  + ${key}: ${getVal(value[1], depthСount, space)}`];
 
     case 'unchanged':
       return [...acc, `\n${space.repeat(depthСount)}    ${key}: ${getVal(value, depthСount, space)}`];
