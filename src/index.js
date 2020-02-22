@@ -1,6 +1,6 @@
 import path from 'path';
 import parse from './parsers';
-import formatter from './formatters/formatter';
+import { getRender, makeFormatting } from './formatters/formatter';
 
 const getFileExtension = (pathToFile) => path.extname(`${pathToFile}`);
 const keysOf = (obj) => Object.keys(obj);
@@ -32,34 +32,10 @@ const genDiff = (b = {}, a = {}) => {
   }, []);
 };
 
-const getVal = (item, count, mark, recursionFunc) => {
-  if (typeof item.value[0] !== 'object') return item.value;
-  return `{${recursionFunc(genDiff(...item.value, ...item.value), count + 1)}\n    ${mark.repeat(count)}}`;
-};
-
-const getRender = (arr, depthСount = 0) => arr.reduce((acc, val) => {
-  const { status, key, value } = val;
-  const space = '    ';
-
-  switch (status) {
-    case 'added':
-      return [...acc, `\n${space.repeat(depthСount)}  + ${key}: ${getVal(val, depthСount, space, getRender)}`];
-
-    case 'deleted':
-      return [...acc, `\n${space.repeat(depthСount)}  - ${key}: ${getVal(val, depthСount, space, getRender)}`];
-
-    case 'unchanged':
-      return [...acc, `\n${space.repeat(depthСount)}    ${key}: ${getVal(val, depthСount, space, getRender)}`];
-
-    default:
-      return [...acc, `\n${space.repeat(depthСount)}    ${key}: {`, ...getRender(value, depthСount + 1), `\n    ${space.repeat(depthСount)}}`];
-  }
-}, []);
-
-const makeFormatting = (before, after, format) => {
+const getFormatting = (before, after, format) => {
   switch (format) {
     case 'plain':
-      return formatter(before, after);
+      return makeFormatting(before, after);
 
     case 'json':
       return JSON.stringify(before, after);
@@ -74,5 +50,5 @@ export default (before, after, format = '') => {
   const extName = (obj) => getFileExtension(obj);
   const bConfig = parse(extName(before), before);
   const aConfig = parse(extName(after), after);
-  return makeFormatting(bConfig, aConfig, format);
+  return getFormatting(bConfig, aConfig, format);
 };
