@@ -1,10 +1,11 @@
 import path from 'path';
 import parse from './parsers';
-import { getRender, makeFormatting } from './formatters/formatter';
+import getResult from './formatters/formatter';
 
 const getFileExtension = (pathToFile) => path.extname(`${pathToFile}`);
 const keysOf = (obj) => Object.keys(obj);
 const makeObj = (status, key, value) => ({ status, key, value });
+
 // b is "before"
 // a is "after"
 const genDiff = (b = {}, a = {}) => {
@@ -22,8 +23,7 @@ const genDiff = (b = {}, a = {}) => {
 
     if (keysOf(b).includes(key) && keysOf(a).includes(key)) {
       return [...acc,
-        makeObj('deleted', key, [b[key]]),
-        makeObj('added', key, [a[key]])];
+        makeObj('changed', key, [[b[key]], [a[key]]])];
     }
 
     return !keysOf(b).includes(key)
@@ -32,23 +32,10 @@ const genDiff = (b = {}, a = {}) => {
   }, []);
 };
 
-const getFormatting = (before, after, format) => {
-  switch (format) {
-    case 'plain':
-      return makeFormatting(before, after);
-
-    case 'json':
-      return JSON.stringify(before, after);
-
-    default:
-      break;
-  }
-  return `{${getRender(genDiff(before, after)).join('')}\n}`;
-};
-
 export default (before, after, format = '') => {
   const extName = (obj) => getFileExtension(obj);
-  const bConfig = parse(extName(before), before);
-  const aConfig = parse(extName(after), after);
-  return getFormatting(bConfig, aConfig, format);
+  const b = parse(extName(before), before);
+  const a = parse(extName(after), after);
+  return format === 'json' ? JSON.stringify(b, a)
+    : getResult(genDiff(b, a), format);
 };
