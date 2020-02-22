@@ -4,6 +4,7 @@ import formatter from './formatters/formatter';
 
 const getFileExtension = (pathToFile) => path.extname(`${pathToFile}`);
 const keysOf = (obj) => Object.keys(obj);
+const makeObj = (status, key, value) => ({ status, key, value });
 // b is "before"
 // a is "after"
 const genDiff = (b = {}, a = {}) => {
@@ -12,26 +13,28 @@ const genDiff = (b = {}, a = {}) => {
   return mergedConfigsArr.reduce((acc, value) => {
     const [key] = value;
 
-    if (b[key] === a[key]) {
-      return [...acc, { status: 'unchanged', key: `${key}`, value: [a[key]] }];
-    }
+    if (b[key] === a[key]) return [...acc, makeObj('unchanged', key, [a[key]])];
+
     if (typeof b[key] === 'object' && typeof a[key] === 'object') {
-      return [...acc, { status: 'gottaCheckDeeper', key: `${key}`, value: genDiff(b[key], a[key]) }];
+      return [...acc,
+        makeObj('gottaCheckDeeper', key, genDiff(b[key], a[key]))];
     }
+
     if (keysOf(b).includes(key) && keysOf(a).includes(key)) {
       return [...acc,
-        { status: 'changedOld', key: `${key}`, value: [b[key]] },
-        { status: 'changedNew', key: `${key}`, value: [a[key]] }];
+        makeObj('deleted', key, [b[key]]),
+        makeObj('added', key, [a[key]])];
     }
+
     return !keysOf(b).includes(key)
-      ? [...acc, { status: 'added', key: `${key}`, value: [a[key]] }]
-      : [...acc, { status: 'deleted', key: `${key}`, value: [b[key]] }];
+      ? [...acc, makeObj('added', key, [a[key]])]
+      : [...acc, makeObj('deleted', key, [b[key]])];
   }, []);
 };
 
 const getVal = (item, count, mark, recursionFunc) => {
   if (typeof item.value[0] !== 'object') return item.value;
-  return `{${recursionFunc(genDiff(item.value[0], item.value[0]), count + 1)}\n    ${mark.repeat(count)}}`;
+  return `{${recursionFunc(genDiff(...item.value, ...item.value), count + 1)}\n    ${mark.repeat(count)}}`;
 };
 
 const getRender = (arr, depthСount = 0) => arr.reduce((acc, val) => {
@@ -48,12 +51,6 @@ const getRender = (arr, depthСount = 0) => arr.reduce((acc, val) => {
     case 'unchanged':
       return [...acc, `\n${space.repeat(depthСount)}    ${key}: ${getVal(val, depthСount, space, getRender)}`];
 
-    case 'changedOld':
-      return [...acc, `\n${space.repeat(depthСount)}  - ${key}: ${getVal(val, depthСount, space, getRender)}`];
-
-    case 'changedNew':
-      return [...acc, `\n${space.repeat(depthСount)}  + ${key}: ${getVal(val, depthСount, space, getRender)}`];
-
     default:
       return [...acc, `\n${space.repeat(depthСount)}    ${key}: {`, ...getRender(value, depthСount + 1), `\n    ${space.repeat(depthСount)}}`];
   }
@@ -68,8 +65,9 @@ const makeFormatting = (before, after, format) => {
       return JSON.stringify(before, after);
 
     default:
-      return `{${getRender(genDiff(before, after)).join('')}\n}`;
+      break;
   }
+  return `{${getRender(genDiff(before, after)).join('')}\n}`;
 };
 
 export default (before, after, format = '') => {
