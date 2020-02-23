@@ -1,31 +1,36 @@
 import _ from 'lodash';
 
-const valueOf = (item) => {
-  if (_.isPlainObject(...item)) return '[complex value]';
-  return _.isString(...item) ? `"${item}"` : item;
+const getVal = (arr) => {
+  const item = arr[0];
+  if (_.isPlainObject(item)) return '[complex value]';
+  return _.isString(item) ? `"${arr}"` : arr;
 };
 
-const getPlain = (arr, fullPath = '') => arr.reduce((acc, val) => {
-  const { status, key, value } = val;
-  const pathToVerifiableKey = `${fullPath}.${key}`.slice(1);
+const getPlain = (arr, fullPath = '') => {
+  const result = arr.map((val) => {
+    const { status, key, value } = val;
+    const pathToVerifiableKey = `${fullPath}.${key}`.slice(1);
 
-  switch (status) {
-    case 'added':
-      return [...acc, `Property '${pathToVerifiableKey}' was added with value: ${valueOf(value)} `];
+    switch (status) {
+      case 'added':
+        return [`Property '${pathToVerifiableKey}' was added with value: ${getVal(value)} `];
 
-    case 'deleted':
-      return [...acc, `Property '${pathToVerifiableKey}' was deleted `];
+      case 'deleted':
+        return [`Property '${pathToVerifiableKey}' was deleted `];
 
-    case 'changed':
-      return [...acc, `Property '${pathToVerifiableKey}' was changed from ${valueOf(value[0])} to ${valueOf(value[1])} `];
+      case 'changed':
+        return [`Property '${pathToVerifiableKey}' was changed from ${getVal(value[0])} to ${getVal(value[1])} `];
 
-    case 'unchanged':
-      return [...acc];
+      case 'unchanged':
+        return [];
 
-    default:
-      return [...acc, getPlain(value, `${fullPath}.${key}`)];
-  }
-}, []);
+      default:
+        return [getPlain(value, `${fullPath}.${key}`)];
+    }
+  }, []);
+
+  return result.flat(Infinity).join('\n');
+};
 
 
 export default getPlain;
