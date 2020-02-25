@@ -11,6 +11,7 @@ const getPlain = (arr, fullPath = '') => {
   const result = arr.map((val) => {
     const { status, key, value } = val;
     const pathToVerifiableKey = `${fullPath}.${key}`.slice(1);
+    const [oldValue, newValue] = value; // this is only for case 'changed'
 
     switch (status) {
       case 'added':
@@ -20,7 +21,7 @@ const getPlain = (arr, fullPath = '') => {
         return [`Property '${pathToVerifiableKey}' was deleted `];
 
       case 'changed':
-        return [`Property '${pathToVerifiableKey}' was changed from ${makeVal(value[0])} to ${makeVal(value[1])} `];
+        return [`Property '${pathToVerifiableKey}' was changed from ${makeVal(oldValue)} to ${makeVal(newValue)} `];
 
       case 'unchanged':
         return [];

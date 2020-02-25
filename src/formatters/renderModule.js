@@ -13,6 +13,8 @@ const makeVal = (arr, count, mark) => {
 const makeRender = (arr, depthСount = 0) => arr.map((val) => {
   const { status, key, value } = val;
   const space = '    ';
+  const [oldValue, newValue] = value; // this is only for case 'changed'
+
 
   switch (status) {
     case 'added':
@@ -22,7 +24,7 @@ const makeRender = (arr, depthСount = 0) => arr.map((val) => {
       return [`\n${space.repeat(depthСount)}  - ${key}: ${makeVal(value, depthСount, space)}`];
 
     case 'changed':
-      return [`\n${space.repeat(depthСount)}  - ${key}: ${makeVal(value[0], depthСount, space)}`, `\n${space.repeat(depthСount)}  + ${key}: ${makeVal(value[1], depthСount, space)}`];
+      return [`\n${space.repeat(depthСount)}  - ${key}: ${makeVal(oldValue, depthСount, space)}`, `\n${space.repeat(depthСount)}  + ${key}: ${makeVal(newValue, depthСount, space)}`];
 
     case 'unchanged':
       return [`\n${space.repeat(depthСount)}    ${key}: ${makeVal(value, depthСount, space)}`];
