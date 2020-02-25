@@ -1,4 +1,4 @@
-import getRender from './textModule';
-import getPlain from './plainModule';
+import getRender from './renderModule';
+import getRenderPlain from './renderPlainModule';
 
-export default (arr, format) => (format === 'plain' ? getPlain(arr) : getRender(arr));
+export default (arr, format) => (format === 'plain' ? getRenderPlain(arr) : getRender(arr));

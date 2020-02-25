@@ -1,9 +1,10 @@
 import _ from 'lodash';
 
-const getVal = (arr) => {
-  const item = arr[0];
-  if (_.isPlainObject(item)) return '[complex value]';
-  return _.isString(item) ? `"${arr}"` : arr;
+const makeVal = (arr) => {
+  const verifiableItem = arr[0];
+  if (_.isPlainObject(verifiableItem)) return '[complex value]';
+
+  return _.isString(verifiableItem) ? `"${arr}"` : arr;
 };
 
 const getPlain = (arr, fullPath = '') => {
@@ -13,24 +14,28 @@ const getPlain = (arr, fullPath = '') => {
 
     switch (status) {
       case 'added':
-        return [`Property '${pathToVerifiableKey}' was added with value: ${getVal(value)} `];
+        return [`Property '${pathToVerifiableKey}' was added with value: ${makeVal(value)} `];
 
       case 'deleted':
         return [`Property '${pathToVerifiableKey}' was deleted `];
 
       case 'changed':
-        return [`Property '${pathToVerifiableKey}' was changed from ${getVal(value[0])} to ${getVal(value[1])} `];
+        return [`Property '${pathToVerifiableKey}' was changed from ${makeVal(value[0])} to ${makeVal(value[1])} `];
 
       case 'unchanged':
         return [];
 
-      default:
+      case 'gottaCheckDeeper':
         return [getPlain(value, `${fullPath}.${key}`)];
+
+      default:
+        break;
     }
+
+    return [];
   }, []);
 
   return result.flat(Infinity).join('\n');
 };
-
 
 export default getPlain;
