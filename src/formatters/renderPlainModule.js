@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const makeVal = (arr) => {
+const setVal = (arr) => {
   const verifiableItem = arr[0];
   if (_.isPlainObject(verifiableItem)) return '[complex value]';
 
@@ -15,13 +15,13 @@ const getPlain = (arr, fullPath = '') => {
 
     switch (status) {
       case 'added':
-        return [`Property '${pathToVerifiableKey}' was added with value: ${makeVal(value)} `];
+        return [`Property '${pathToVerifiableKey}' was added with value: ${setVal(value)} `];
 
       case 'deleted':
         return [`Property '${pathToVerifiableKey}' was deleted `];
 
       case 'changed':
-        return [`Property '${pathToVerifiableKey}' was changed from ${makeVal(oldValue)} to ${makeVal(newValue)} `];
+        return [`Property '${pathToVerifiableKey}' was changed from ${setVal(oldValue)} to ${setVal(newValue)} `];
 
       case 'unchanged':
         return [];

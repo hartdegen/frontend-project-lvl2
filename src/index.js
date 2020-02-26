@@ -1,14 +1,15 @@
 import _ from 'lodash';
+import fs from 'fs';
 import path from 'path';
 import parse from './parsers';
 import getResult from './formatters/formatter';
 
 const makeObj = (status, key, value) => ({ status, key, value });
 
-// b is "before"
-// a is "after"
+// b is config "before"
+// a is config "after"
 const genDiff = (b, a) => {
-  const configKeys = Object.keys({ ...b, ...a });
+  const configKeys = _.keys({ ...b, ...a });
 
   return configKeys.map((key) => {
     if (_.isEqual(b[key], a[key])) {
@@ -29,11 +30,13 @@ const genDiff = (b, a) => {
   });
 };
 
-const getFileExtension = (file) => path.extname(`${file}`);
+const getFileExtension = (fileName) => path.extname(`${fileName}`);
+const getAbsolutePath = (fileName) => path.resolve(process.cwd(), fileName);
+const getConfig = (pathToConfig) => fs.readFileSync(getAbsolutePath(pathToConfig), 'utf8');
 
 export default (before, after, format = '') => {
-  const b = parse(getFileExtension(before), before);
-  const a = parse(getFileExtension(after), after);
+  const b = parse(getFileExtension(before), getConfig(before));
+  const a = parse(getFileExtension(after), getConfig(after));
   const data = genDiff(b, a);
 
   return format === 'json' ? JSON.stringify(b, a)
