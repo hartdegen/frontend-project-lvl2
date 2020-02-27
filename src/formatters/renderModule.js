@@ -15,7 +15,6 @@ const startRender = (arr, depthСount = 0) => arr.map((val) => {
   const space = '    ';
   const [oldValue, newValue] = value; // this is only for case 'changed'
 
-
   switch (status) {
     case 'added':
       return [`\n${space.repeat(depthСount)}  + ${key}: ${setVal(value, depthСount, space)}`];
@@ -33,10 +32,8 @@ const startRender = (arr, depthСount = 0) => arr.map((val) => {
       return [`\n${space.repeat(depthСount)}    ${key}: {`, startRender(value, depthСount + 1), `\n    ${space.repeat(depthСount)}}`];
 
     default:
-      break;
+      throw new Error(`Warning: Unknown render case: '${status}'!`);
   }
-
-  return [];
 }, []);
 
 const getRenderResult = (obj) => `{${startRender(obj).flat(Infinity).join('')}\n}`;

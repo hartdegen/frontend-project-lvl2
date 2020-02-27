@@ -30,10 +30,8 @@ const getPlain = (arr, fullPath = '') => {
         return [getPlain(value, `${fullPath}.${key}`)];
 
       default:
-        break;
+        throw new Error(`Warning: Unknown render case: '${status}'!`);
     }
-
-    return [];
   }, []);
 
   return result.flat(Infinity).join('\n');
