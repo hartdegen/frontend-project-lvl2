@@ -1,8 +1,10 @@
 import yaml from 'js-yaml';
 import ini from 'ini';
 
-export default (extName, config) => {
-  if (extName === '.yaml') return yaml.safeLoad(config);
-  if (extName === '.ini') return ini.parse(config);
-  return JSON.parse(config);
+const mapping = {
+  '.yaml': yaml.safeLoad,
+  '.ini': ini.parse,
+  '.json': JSON.parse,
 };
+
+export default (type, data) => mapping[type](data);

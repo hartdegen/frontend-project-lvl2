@@ -9,9 +9,9 @@ const makeObj = (status, key, value) => ({ status, key, value });
 // b is config "before"
 // a is config "after"
 const genDiff = (b, a) => {
-  const configKeys = _.keys({ ...b, ...a });
+  const keys = _.union(_.keys(b), _.keys(a));
 
-  return configKeys.map((key) => {
+  return keys.map((key) => {
     if (_.isEqual(b[key], a[key])) {
       return makeObj('unchanged', key, [a[key]]);
     }
@@ -39,6 +39,5 @@ export default (before, after, format = '') => {
   const a = parse(getFileExtension(after), getConfig(after));
   const data = genDiff(b, a);
 
-  return format === 'json' ? JSON.stringify(b, a)
-    : getResult(data, format);
+  return getResult(data, format);
 };
