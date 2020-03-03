@@ -11,25 +11,25 @@ const setVal = (arr, count, mark) => {
 };
 
 const startRender = (arr, depthСount = 0) => arr.map((val) => {
-  const { status, key, value } = val;
+  const { status, key, oneOrMoreValues } = val;
   const space = '    ';
-  const [oldValue, newValue] = value; // this is only for case 'changed'
+  const [oldValue, newValue] = oneOrMoreValues; // this is only for case 'changed'
 
   switch (status) {
     case 'added':
-      return [`\n${space.repeat(depthСount)}  + ${key}: ${setVal(value, depthСount, space)}`];
+      return [`\n${space.repeat(depthСount)}  + ${key}: ${setVal(oneOrMoreValues, depthСount, space)}`];
 
     case 'deleted':
-      return [`\n${space.repeat(depthСount)}  - ${key}: ${setVal(value, depthСount, space)}`];
+      return [`\n${space.repeat(depthСount)}  - ${key}: ${setVal(oneOrMoreValues, depthСount, space)}`];
 
     case 'changed':
       return [`\n${space.repeat(depthСount)}  - ${key}: ${setVal(oldValue, depthСount, space)}`, `\n${space.repeat(depthСount)}  + ${key}: ${setVal(newValue, depthСount, space)}`];
 
     case 'unchanged':
-      return [`\n${space.repeat(depthСount)}    ${key}: ${setVal(value, depthСount, space)}`];
+      return [`\n${space.repeat(depthСount)}    ${key}: ${setVal(oneOrMoreValues, depthСount, space)}`];
 
     case 'gottaCheckDeeper':
-      return [`\n${space.repeat(depthСount)}    ${key}: {`, startRender(value, depthСount + 1), `\n    ${space.repeat(depthСount)}}`];
+      return [`\n${space.repeat(depthСount)}    ${key}: {`, startRender(oneOrMoreValues, depthСount + 1), `\n    ${space.repeat(depthСount)}}`];
 
     default:
       throw new Error(`Warning: Unknown render case: '${status}'!`);

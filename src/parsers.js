@@ -7,4 +7,4 @@ const mapping = {
   '.json': JSON.parse,
 };
 
-export default (type, data) => mapping[type](data);
+export default (data, type) => mapping[type](data);
