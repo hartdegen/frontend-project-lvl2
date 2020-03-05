@@ -10,32 +10,32 @@ const setVal = (arr, count, mark) => {
   }, []);
 };
 
-const startRender = (arr, depthСount = 0) => arr.map((val) => {
-  const { status, key, oneOrMoreValues } = val;
+const prepareDataToRender = (arr, depthСount = 0) => arr.map((val) => {
+  const { status, key, children } = val;
   const space = '    ';
-  const [oldValue, newValue] = oneOrMoreValues; // this is only for case 'changed'
+  const [oldValue, newValue] = children; // this is only for case 'changed'
 
   switch (status) {
     case 'added':
-      return [`\n${space.repeat(depthСount)}  + ${key}: ${setVal(oneOrMoreValues, depthСount, space)}`];
+      return [`${space.repeat(depthСount)}  + ${key}: ${setVal(children, depthСount, space)}`];
 
     case 'deleted':
-      return [`\n${space.repeat(depthСount)}  - ${key}: ${setVal(oneOrMoreValues, depthСount, space)}`];
+      return [`${space.repeat(depthСount)}  - ${key}: ${setVal(children, depthСount, space)}`];
 
     case 'changed':
-      return [`\n${space.repeat(depthСount)}  - ${key}: ${setVal(oldValue, depthСount, space)}`, `\n${space.repeat(depthСount)}  + ${key}: ${setVal(newValue, depthСount, space)}`];
+      return [`${space.repeat(depthСount)}  - ${key}: ${setVal(oldValue, depthСount, space)}`, `${space.repeat(depthСount)}  + ${key}: ${setVal(newValue, depthСount, space)}`];
 
     case 'unchanged':
-      return [`\n${space.repeat(depthСount)}    ${key}: ${setVal(oneOrMoreValues, depthСount, space)}`];
+      return [`${space.repeat(depthСount)}    ${key}: ${setVal(children, depthСount, space)}`];
 
     case 'gottaCheckDeeper':
-      return [`\n${space.repeat(depthСount)}    ${key}: {`, startRender(oneOrMoreValues, depthСount + 1), `\n    ${space.repeat(depthСount)}}`];
+      return [`${space.repeat(depthСount)}    ${key}: {`, prepareDataToRender(children, depthСount + 1), `    ${space.repeat(depthСount)}}`];
 
     default:
       throw new Error(`Warning: Unknown render case: '${status}'!`);
   }
 }, []);
 
-const getRenderResult = (obj) => `{${startRender(obj).flat(Infinity).join('')}\n}`;
+const runRender = (obj) => `{\n${prepareDataToRender(obj).flat(Infinity).join('\n')}\n}`;
 
-export default getRenderResult;
+export default runRender;

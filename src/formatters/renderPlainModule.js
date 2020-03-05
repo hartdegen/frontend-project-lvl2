@@ -9,13 +9,13 @@ const setVal = (arr) => {
 
 const getPlain = (arr, fullPath = '') => {
   const result = arr.map((val) => {
-    const { status, key, oneOrMoreValues } = val;
+    const { status, key, children } = val;
     const pathToVerifiableKey = `${fullPath}.${key}`.slice(1);
-    const [oldValue, newValue] = oneOrMoreValues; // this is only for case 'changed'
+    const [oldValue, newValue] = children; // this is only for case 'changed'
 
     switch (status) {
       case 'added':
-        return [`Property '${pathToVerifiableKey}' was added with value: ${setVal(oneOrMoreValues)} `];
+        return [`Property '${pathToVerifiableKey}' was added with value: ${setVal(children)} `];
 
       case 'deleted':
         return [`Property '${pathToVerifiableKey}' was deleted `];
@@ -27,7 +27,7 @@ const getPlain = (arr, fullPath = '') => {
         return [];
 
       case 'gottaCheckDeeper':
-        return [getPlain(oneOrMoreValues, `${fullPath}.${key}`)];
+        return [getPlain(children, `${fullPath}.${key}`)];
 
       default:
         throw new Error(`Warning: Unknown render case: '${status}'!`);

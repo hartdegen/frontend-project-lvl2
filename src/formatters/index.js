@@ -9,7 +9,7 @@ export default (arr, format) => {
     case 'plain':
       return getRenderPlain(arr);
 
-    case '':
+    case 'render':
       return getRender(arr);
 
     default:
