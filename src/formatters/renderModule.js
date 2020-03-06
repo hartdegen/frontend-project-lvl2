@@ -17,16 +17,16 @@ const prepareDataToRender = (arr, depthСount = 0) => arr.map((val) => {
 
   switch (status) {
     case 'added':
-      return [`${space.repeat(depthСount)}  + ${key}: ${setVal(children, depthСount, space)}`];
+      return `${space.repeat(depthСount)}  + ${key}: ${setVal(children, depthСount, space)}`;
 
     case 'deleted':
-      return [`${space.repeat(depthСount)}  - ${key}: ${setVal(children, depthСount, space)}`];
+      return `${space.repeat(depthСount)}  - ${key}: ${setVal(children, depthСount, space)}`;
 
     case 'changed':
-      return [`${space.repeat(depthСount)}  - ${key}: ${setVal(oldValue, depthСount, space)}`, `${space.repeat(depthСount)}  + ${key}: ${setVal(newValue, depthСount, space)}`];
+      return `${space.repeat(depthСount)}  - ${key}: ${setVal(oldValue, depthСount, space)}\n${space.repeat(depthСount)}  + ${key}: ${setVal(newValue, depthСount, space)}`;
 
     case 'unchanged':
-      return [`${space.repeat(depthСount)}    ${key}: ${setVal(children, depthСount, space)}`];
+      return `${space.repeat(depthСount)}    ${key}: ${setVal(children, depthСount, space)}`;
 
     case 'gottaCheckDeeper':
       return [`${space.repeat(depthСount)}    ${key}: {`, prepareDataToRender(children, depthСount + 1), `    ${space.repeat(depthСount)}}`];

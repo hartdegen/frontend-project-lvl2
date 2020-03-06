@@ -7,7 +7,7 @@ const setVal = (arr) => {
   return _.isString(verifiableItem) ? `"${arr}"` : arr;
 };
 
-const getPlain = (arr, fullPath = '') => {
+const runPlainRender = (arr, fullPath = '') => {
   const result = arr.map((val) => {
     const { status, key, children } = val;
     const pathToVerifiableKey = `${fullPath}.${key}`.slice(1);
@@ -15,19 +15,19 @@ const getPlain = (arr, fullPath = '') => {
 
     switch (status) {
       case 'added':
-        return [`Property '${pathToVerifiableKey}' was added with value: ${setVal(children)} `];
+        return `Property '${pathToVerifiableKey}' was added with value: ${setVal(children)} `;
 
       case 'deleted':
-        return [`Property '${pathToVerifiableKey}' was deleted `];
+        return `Property '${pathToVerifiableKey}' was deleted `;
 
       case 'changed':
-        return [`Property '${pathToVerifiableKey}' was changed from ${setVal(oldValue)} to ${setVal(newValue)} `];
+        return `Property '${pathToVerifiableKey}' was changed from ${setVal(oldValue)} to ${setVal(newValue)} `;
 
       case 'unchanged':
         return [];
 
       case 'gottaCheckDeeper':
-        return [getPlain(children, `${fullPath}.${key}`)];
+        return runPlainRender(children, `${fullPath}.${key}`);
 
       default:
         throw new Error(`Warning: Unknown render case: '${status}'!`);
@@ -37,4 +37,4 @@ const getPlain = (arr, fullPath = '') => {
   return result.flat(Infinity).join('\n');
 };
 
-export default getPlain;
+export default runPlainRender;
