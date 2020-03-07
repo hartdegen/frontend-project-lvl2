@@ -1,19 +1,19 @@
 import _ from 'lodash';
 
-const setVal = (arr, count, mark) => {
-  const verifiableItem = arr[0];
-  if (!_.isPlainObject(verifiableItem)) return arr;
+const setVal = (item, count, mark) => {
+  if (!_.isPlainObject(item)) return item;
+  const pairs = _.toPairs(item);
 
-  return arr.map((obj) => {
-    const [key, val] = _.toPairs(obj)[0];
+  return pairs.map((keyAndValue) => {
+    const [key, val] = keyAndValue;
     return `{\n${mark.repeat(count + 1)}    ${key}: ${val}\n    ${mark.repeat(count)}}`;
-  }, []);
+  });
 };
 
 const prepareDataToRender = (arr, depthСount = 0) => arr.map((val) => {
   const { status, key, children } = val;
   const space = '    ';
-  const [oldValue, newValue] = children; // this is only for case 'changed'
+  const { oldValue, newValue } = children; // this is only for case 'changed'
 
   switch (status) {
     case 'added':

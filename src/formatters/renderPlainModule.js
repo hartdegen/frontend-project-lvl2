@@ -1,17 +1,16 @@
 import _ from 'lodash';
 
-const setVal = (arr) => {
-  const verifiableItem = arr[0];
-  if (_.isPlainObject(verifiableItem)) return '[complex value]';
+const setVal = (item) => {
+  if (_.isPlainObject(item)) return '[complex value]';
 
-  return _.isString(verifiableItem) ? `"${arr}"` : arr;
+  return _.isString(item) ? `"${item}"` : item;
 };
 
 const runPlainRender = (arr, fullPath = '') => {
   const result = arr.map((val) => {
     const { status, key, children } = val;
     const pathToVerifiableKey = `${fullPath}.${key}`.slice(1);
-    const [oldValue, newValue] = children; // this is only for case 'changed'
+    const { oldValue, newValue } = children; // this is only for case 'changed'
 
     switch (status) {
       case 'added':

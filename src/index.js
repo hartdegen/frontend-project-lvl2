@@ -13,17 +13,17 @@ const genDiff = (b, a) => {
   if (_.isEmpty(keys)) throw new Error('Warning: The program cannot be executed. Please check arguments for compliance with the requirements');
 
   return keys.map((key) => {
-    if (!_.has(b, key)) return makeObj('added', key, [a[key]]);
-    if (!_.has(a, key)) return makeObj('deleted', key, [b[key]]);
+    if (!_.has(b, key)) return makeObj('added', key, a[key]);
+    if (!_.has(a, key)) return makeObj('deleted', key, b[key]);
 
     if (_.isPlainObject(b[key]) && _.isPlainObject(a[key])) {
       return makeObj('gottaCheckDeeper', key, genDiff(b[key], a[key]));
     }
 
     if (_.isEqual(b[key], a[key])) {
-      return makeObj('unchanged', key, [a[key]]);
+      return makeObj('unchanged', key, a[key]);
     }
-    return makeObj('changed', key, [[b[key]], [a[key]]]);
+    return makeObj('changed', key, { oldValue: b[key], newValue: a[key] });
   });
 };
 
