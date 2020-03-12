@@ -6,21 +6,21 @@ const setVal = (item) => {
   return _.isString(item) ? `"${item}"` : item;
 };
 
-const runPlainRender = (arr, fullPath = '') => arr.map((val) => {
-  const { status, key, values } = val;
+const runPlainRender = (arr, fullPath = '') => arr.map((item) => {
+  const { status, key, values } = item;
+
   const pathToVerifiableKey = `${fullPath}.${key}`.slice(1);
-  const { oldValue, newValue } = values; // this is only for case 'changed'
-  const { value } = values; //              and this for all others
+  const { oldValue, currentValue } = values;
 
   switch (status) {
     case 'added':
-      return `Property '${pathToVerifiableKey}' was added with value: ${setVal(value)} `;
+      return `Property '${pathToVerifiableKey}' was added with value: ${setVal(currentValue)}`;
 
     case 'deleted':
-      return `Property '${pathToVerifiableKey}' was deleted `;
+      return `Property '${pathToVerifiableKey}' was deleted`;
 
     case 'changed':
-      return `Property '${pathToVerifiableKey}' was changed from ${setVal(oldValue)} to ${setVal(newValue)} `;
+      return `Property '${pathToVerifiableKey}' was changed from ${setVal(oldValue)} to ${setVal(currentValue)}`;
 
     case 'unchanged':
       return [];
@@ -31,8 +31,7 @@ const runPlainRender = (arr, fullPath = '') => arr.map((val) => {
     default:
       throw new Error(`Warning: Unknown render case: '${status}'!`);
   }
-}, []);
+});
 
 const getResult = (arr, fullPath) => runPlainRender(arr, fullPath).flat(Infinity).join('\n');
-
 export default getResult;

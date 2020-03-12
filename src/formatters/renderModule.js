@@ -10,33 +10,32 @@ const setVal = (item, count, mark) => {
   });
 };
 
-const runRender = (arr, depthСount = 0) => arr.map((val) => {
-  const { status, key, values } = val;
+const runRender = (arr, depth = 0) => arr.map((item) => {
+  const { status, key, values } = item;
+
   const space = '    ';
-  const { oldValue, newValue } = values; // this is only for case 'changed'
-  const { value } = values; // and this for all others
+  const { oldValue, currentValue } = values;
 
   switch (status) {
     case 'added':
-      return `${space.repeat(depthСount)}  + ${key}: ${setVal(value, depthСount, space)}`;
+      return `${space.repeat(depth)}  + ${key}: ${setVal(currentValue, depth, space)}`;
 
     case 'deleted':
-      return `${space.repeat(depthСount)}  - ${key}: ${setVal(value, depthСount, space)}`;
-
-    case 'changed':
-      return `${space.repeat(depthСount)}  - ${key}: ${setVal(oldValue, depthСount, space)}\n${space.repeat(depthСount)}  + ${key}: ${setVal(newValue, depthСount, space)}`;
+      return `${space.repeat(depth)}  - ${key}: ${setVal(currentValue, depth, space)}`;
 
     case 'unchanged':
-      return `${space.repeat(depthСount)}    ${key}: ${setVal(value, depthСount, space)}`;
+      return `${space.repeat(depth)}    ${key}: ${setVal(currentValue, depth, space)}`;
+
+    case 'changed':
+      return `${space.repeat(depth)}  - ${key}: ${setVal(oldValue, depth, space)}\n${space.repeat(depth)}  + ${key}: ${setVal(currentValue, depth, space)}`;
 
     case 'nested':
-      return [`${space.repeat(depthСount)}    ${key}: {`, runRender(values, depthСount + 1), `    ${space.repeat(depthСount)}}`];
+      return [`${space.repeat(depth)}    ${key}: {`, runRender(values, depth + 1), `${space.repeat(depth + 1)}}`];
 
     default:
       throw new Error(`Warning: Unknown render case: '${status}'!`);
   }
-}, []);
-
+});
 const getResult = (obj) => `{\n${runRender(obj).flat(Infinity).join('\n')}\n}`;
 
 export default getResult;

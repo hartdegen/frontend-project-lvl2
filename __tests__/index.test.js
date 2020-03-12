@@ -5,9 +5,9 @@ import genDiff from '../src';
 const pathTo = (fileName) => path.resolve(`${__dirname}/fixtures/${fileName}`);
 
 test.each([
-  ['before.json', 'after.json', 'default', 'resultTextFormat'],
-  ['before.ini', 'after.ini', 'default', 'resultTextFormat'],
-  ['before.yaml', 'after.yaml', 'default', 'resultTextFormat'],
+  ['before.json', 'after.json', 'pretty', 'resultTextFormat'],
+  ['before.ini', 'after.ini', 'pretty', 'resultTextFormat'],
+  ['before.yaml', 'after.yaml', 'pretty', 'resultTextFormat'],
   ['before.yaml', 'after.yaml', 'plain', 'resultPlainFormat'],
   ['before.yaml', 'after.yaml', 'json', 'example.json'],
 ])('calculate differences between 2 configs', (beforeConfig, afterConfig, format, resultFileName) => {
