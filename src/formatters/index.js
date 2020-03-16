@@ -1,5 +1,5 @@
-import getRender from './renderModule';
-import getRenderPlain from './renderPlainModule';
+import getPrettyRender from './pretty';
+import getPlainRender from './plain';
 
 export default (arr, format) => {
   switch (format) {
@@ -7,10 +7,10 @@ export default (arr, format) => {
       return JSON.stringify(arr);
 
     case 'plain':
-      return getRenderPlain(arr);
+      return getPlainRender(arr);
 
     case 'pretty':
-      return getRender(arr);
+      return getPrettyRender(arr);
 
     default:
       throw new Error(`Warning: Unknown render mode: '${format}'!`);

@@ -6,11 +6,12 @@ const setVal = (item) => {
   return _.isString(item) ? `"${item}"` : item;
 };
 
-const runPlainRender = (arr, fullPath = '') => arr.map((item) => {
-  const { status, key, values } = item;
+const prerender = (arr, fullPath = '') => arr.map((item) => {
+  const {
+    status, key, currentValue, oldValue,
+  } = item;
 
   const pathToVerifiableKey = `${fullPath}.${key}`.slice(1);
-  const { oldValue, currentValue } = values;
 
   switch (status) {
     case 'added':
@@ -26,12 +27,12 @@ const runPlainRender = (arr, fullPath = '') => arr.map((item) => {
       return [];
 
     case 'nested':
-      return runPlainRender(values, `${fullPath}.${key}`);
+      return prerender(currentValue, `${fullPath}.${key}`);
 
     default:
       throw new Error(`Warning: Unknown render case: '${status}'!`);
   }
 });
 
-const getResult = (arr, fullPath) => runPlainRender(arr, fullPath).flat(Infinity).join('\n');
-export default getResult;
+const render = (arr) => prerender(arr).flat(Infinity).join('\n');
+export default render;
