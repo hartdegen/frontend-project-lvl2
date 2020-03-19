@@ -1,12 +1,12 @@
 import _ from 'lodash';
 
-const setVal = (item) => {
+const setValue = (item) => {
   if (_.isPlainObject(item)) return '[complex value]';
 
   return _.isString(item) ? `"${item}"` : item;
 };
 
-const prerender = (arr, fullPath = '') => arr.map((item) => {
+const prerender = (list, fullPath = '') => list.map((item) => {
   const {
     status, key, currentValue, oldValue,
   } = item;
@@ -15,13 +15,13 @@ const prerender = (arr, fullPath = '') => arr.map((item) => {
 
   switch (status) {
     case 'added':
-      return `Property '${pathToVerifiableKey}' was added with value: ${setVal(currentValue)}`;
+      return `Property '${pathToVerifiableKey}' was added with value: ${setValue(currentValue)}`;
 
     case 'deleted':
       return `Property '${pathToVerifiableKey}' was deleted`;
 
     case 'changed':
-      return `Property '${pathToVerifiableKey}' was changed from ${setVal(oldValue)} to ${setVal(currentValue)}`;
+      return `Property '${pathToVerifiableKey}' was changed from ${setValue(oldValue)} to ${setValue(currentValue)}`;
 
     case 'unchanged':
       return [];
@@ -34,5 +34,5 @@ const prerender = (arr, fullPath = '') => arr.map((item) => {
   }
 });
 
-const render = (arr) => prerender(arr).flat(Infinity).join('\n');
+const render = (list) => prerender(list).flat(Infinity).join('\n');
 export default render;

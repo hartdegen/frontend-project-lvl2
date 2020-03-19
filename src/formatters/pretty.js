@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const setVal = (item, count, mark) => {
+const setValue = (item, count, mark) => {
   if (!_.isPlainObject(item)) return item;
 
   const pairs = _.toPairs(item);
@@ -10,7 +10,7 @@ const setVal = (item, count, mark) => {
   });
 };
 
-const prerender = (arr, depth = 0) => arr.map((item) => {
+const prerender = (list, depth = 0) => list.map((item) => {
   const {
     status, key, currentValue, oldValue,
   } = item;
@@ -19,16 +19,16 @@ const prerender = (arr, depth = 0) => arr.map((item) => {
 
   switch (status) {
     case 'added':
-      return `${space.repeat(depth)}  + ${key}: ${setVal(currentValue, depth, space)}`;
+      return `${space.repeat(depth)}  + ${key}: ${setValue(currentValue, depth, space)}`;
 
     case 'deleted':
-      return `${space.repeat(depth)}  - ${key}: ${setVal(currentValue, depth, space)}`;
+      return `${space.repeat(depth)}  - ${key}: ${setValue(currentValue, depth, space)}`;
 
     case 'unchanged':
-      return `${space.repeat(depth)}    ${key}: ${setVal(currentValue, depth, space)}`;
+      return `${space.repeat(depth)}    ${key}: ${setValue(currentValue, depth, space)}`;
 
     case 'changed':
-      return `${space.repeat(depth)}  - ${key}: ${setVal(oldValue, depth, space)}\n${space.repeat(depth)}  + ${key}: ${setVal(currentValue, depth, space)}`;
+      return `${space.repeat(depth)}  - ${key}: ${setValue(oldValue, depth, space)}\n${space.repeat(depth)}  + ${key}: ${setValue(currentValue, depth, space)}`;
 
     case 'nested':
       return [`${space.repeat(depth)}    ${key}: {`, prerender(currentValue, depth + 1), `${space.repeat(depth + 1)}}`];
@@ -38,6 +38,6 @@ const prerender = (arr, depth = 0) => arr.map((item) => {
   }
 });
 
-const render = (arr) => `{\n${prerender(arr).flat(Infinity).join('\n')}\n}`;
+const render = (list) => `{\n${prerender(list).flat(Infinity).join('\n')}\n}`;
 
 export default render;

@@ -8,34 +8,32 @@ const makeObj = (status, key, currentValue, oldValue = null) => ({
   status, key, currentValue, oldValue,
 });
 
-// b is config "before"
-// a is config "after"
-const genDiff = (b, a) => {
-  const keys = _.union(_.keys(b), _.keys(a));
+const genDiff = (configBefore, configAfter) => {
+  const keys = _.union(_.keys(configBefore), _.keys(configAfter));
   if (_.isEmpty(keys)) return [];
 
   return keys.map((key) => {
-    if (!_.has(b, key)) return makeObj('added', key, a[key]);
-    if (!_.has(a, key)) return makeObj('deleted', key, b[key]);
+    if (!_.has(configBefore, key)) return makeObj('added', key, configAfter[key]);
+    if (!_.has(configAfter, key)) return makeObj('deleted', key, configBefore[key]);
 
-    if (_.isPlainObject(b[key]) && _.isPlainObject(a[key])) {
-      return makeObj('nested', key, genDiff(b[key], a[key]));
+    if (_.isPlainObject(configBefore[key]) && _.isPlainObject(configAfter[key])) {
+      return makeObj('nested', key, genDiff(configBefore[key], configAfter[key]));
     }
 
-    if (_.isEqual(b[key], a[key])) {
-      return makeObj('unchanged', key, a[key]);
+    if (_.isEqual(configBefore[key], configAfter[key])) {
+      return makeObj('unchanged', key, configAfter[key]);
     }
-    return makeObj('changed', key, a[key], b[key]);
+    return makeObj('changed', key, configAfter[key], configBefore[key]);
   });
 };
 
-const getFileType = (fileName) => path.extname(fileName).slice(1);
-const getAbsolutePath = (fileName) => path.resolve(process.cwd(), fileName);
-const getData = (pathToConfig) => fs.readFileSync(getAbsolutePath(pathToConfig), 'utf8');
+const getType = (fileName) => path.extname(fileName).slice(1);
+const getPath = (fileName) => path.resolve(process.cwd(), fileName);
+const getData = (pathToConfig) => fs.readFileSync(getPath(pathToConfig), 'utf8');
 
 export default (configBefore, configAfter, format) => {
-  const dataBefore = parse(getData(configBefore), getFileType(configBefore));
-  const dataAfter = parse(getData(configAfter), getFileType(configAfter));
+  const dataBefore = parse(getData(configBefore), getType(configBefore));
+  const dataAfter = parse(getData(configAfter), getType(configAfter));
   const comparedData = genDiff(dataBefore, dataAfter);
 
   return getResult(comparedData, format);
